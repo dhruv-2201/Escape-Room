@@ -1,4 +1,3 @@
-// src/main/java/com/escaperoom/backend/models/User.java
 package com.escaperoom.backend.models;
 
 import jakarta.persistence.*;
@@ -23,7 +22,7 @@ public class User {
 
     @NotBlank
     @Column(nullable = false)
-    private String passwordHash; // store a hash, never plain text
+    private String passwordHash;
 
     @CreationTimestamp
     private Instant createdAt;
