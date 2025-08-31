@@ -1,7 +1,17 @@
+import { Routes, Route } from "react-router-dom";
+import Homepage from "./components/Homepage";
+import AuthPage from "./components/AuthPage";
 import "./App.css";
 
 function App() {
-  return <h2>Welcome to the Game</h2>;
+  return (
+    <div className="app">
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/auth" element={<AuthPage />} />
+      </Routes>
+    </div>
+  );
 }
 
 export default App;

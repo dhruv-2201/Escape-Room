@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.escaperoom</groupId>
-	<artifactId>escape-room-backend</artifactId>
+	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Escape Room Backend</name>
 	<description>A Spring Boot backend for a Digital Escape Room game with puzzles and story flow.</description>
