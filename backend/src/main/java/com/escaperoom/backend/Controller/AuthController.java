@@ -5,26 +5,20 @@ import com.escaperoom.backend.models.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService service;
-
     @Autowired
-    public AuthController(UserService service) {
-        this.service = service;
-    }
+    private UserService service;
 
     @PostMapping("/")
-    public ResponseEntity<User> checkEmail(@Valid @RequestBody String email) {
+    public ResponseEntity<Boolean> checkEmail(@Valid @RequestBody String email) {
         boolean exists = service.findByEmail(email);
         return ResponseEntity.ok()
                 .header("Cache-Control", "no-store")
-                .body(new User());
+                .body(exists);
     }
 }

@@ -6,14 +6,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    private final UserRepo repo;
-
     @Autowired
-    public UserService(UserRepo repo) {
-        this.repo = repo;
-    }
+    private UserRepo repo;
 
     public boolean findByEmail(String email) {
-        return repo.findByEmail(email);
+        return repo.existsByEmail(email);
     }
 }
