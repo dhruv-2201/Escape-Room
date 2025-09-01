@@ -7,9 +7,18 @@
   width: 100%;
   min-height: 100vh;
   background-color: #1d2327;
+  background-image: url("/images/open_door.png"); /* Updated filename */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-image 1s ease-in-out;
+}
+
+.app.door-closing {
+  background-image: url("/images/closed_door.jpg"); /* Updated filename */
 }
 
 .content {
@@ -89,4 +98,44 @@
 .submit-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #1d2327;
+  color: #ffffff;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.auth-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #4caf50;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.auth-button:hover {
+  background-color: #45a049;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
 }

@@ -11,16 +11,19 @@ function AuthPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth", {
+      const response = await fetch("http://localhost:8080/api/auth", {
+        // Updated URL
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
+        headers: { "Content-Type": "text/plain" }, // Changed content type
+        body: email, // Send just the email string
       });
 
-      if (response.ok) {
-        navigate("/game"); // Navigate to game page after successful auth
+      const exists = await response.json(); // backend returns true/false
+
+      if (exists) {
+        navigate("/login");
+      } else {
+        navigate("/create-account");
       }
     } catch (error) {
       console.error("Auth error:", error);
@@ -40,11 +43,13 @@ function AuthPage() {
           placeholder="Email"
           required
           className="email-input"
+          disabled={loading} // optional: disable input while loading
         />
         <button type="submit" className="submit-button" disabled={loading}>
           {loading ? "Processing..." : "Continue"}
         </button>
       </form>
+      {loading && <p className="loading-text">Checking your email...</p>}
     </div>
   );
 }

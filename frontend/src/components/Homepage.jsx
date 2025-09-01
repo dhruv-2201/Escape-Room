@@ -10,9 +10,9 @@ function Homepage() {
   return (
     <div className="content">
       <h1 className="title">Welcome to the Escape Room</h1>
-      <p className="subtitle">Let's start the game</p>
+      <p className="subtitle">Do you have what it takes to escape?</p>
       <button className="play-button" onClick={handlePlayClick}>
-        Play
+        Play Now
       </button>
     </div>
   );
