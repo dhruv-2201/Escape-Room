@@ -1,6 +1,7 @@
-package com.escaperoom.backend.Controller;
+package com.escaperoom.backend.controller;
 
-import com.escaperoom.backend.Service.UserService;
+import com.escaperoom.backend.dto.LoginRequest;
+import com.escaperoom.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +16,8 @@ public class AuthController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> authenticateUser(@RequestBody String email) {
-        boolean userExists = userService.findByEmail(email);
-        return ResponseEntity.ok(userExists);
+    public ResponseEntity<Boolean> authenticateUser(@RequestBody LoginRequest request) {
+        boolean valid = userService.verifyCredentials(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(valid);
     }
 }
