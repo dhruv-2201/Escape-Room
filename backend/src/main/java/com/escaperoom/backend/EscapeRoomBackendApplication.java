@@ -10,8 +10,5 @@ public class EscapeRoomBackendApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(EscapeRoomBackendApplication.class, args);
-
 	}
-
-
 }
