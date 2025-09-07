@@ -1,7 +1,8 @@
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Homepage from "./components/Homepage";
-import AuthPage from "./components/AuthPage";
+import LoginPage from "./components/LoginPage";
+import CreateAccPage from "./components/CreateAccPage";
 import "./App.css";
 
 function App() {
@@ -23,25 +24,27 @@ function App() {
         <nav className="nav-buttons">
           <button
             className="auth-button"
-            onClick={() => handleNavigation("/auth")}
+            onClick={() => handleNavigation("/login")}
           >
             Login
           </button>
           <button
             className="auth-button"
-            onClick={() => handleNavigation("/auth")}
+            onClick={() => handleNavigation("/create-account")}
           >
             Sign Up
           </button>
         </nav>
       </header>
+
       <div className={`app ${isDoorClosing ? "door-closing" : ""}`}>
         <Routes>
           <Route
             path="/"
-            element={<Homepage onPlay={() => handleNavigation("/auth")} />}
+            element={<Homepage onPlay={() => handleNavigation("/login")} />}
           />
-          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/create-account" element={<CreateAccPage />} />
         </Routes>
       </div>
     </>

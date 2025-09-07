@@ -4,7 +4,7 @@ function Homepage() {
   const navigate = useNavigate();
 
   const handlePlayClick = () => {
-    navigate("/auth");
+    navigate("/login");
   };
 
   return (
