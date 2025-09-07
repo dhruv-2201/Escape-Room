@@ -1,4 +1,7 @@
 package com.escaperoom.backend.model;
 
-public class DifficultyLevel {
+public enum DifficultyLevel {
+    EASY,
+    MEDIUM,
+    HARD
 }
