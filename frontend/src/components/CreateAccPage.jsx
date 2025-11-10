@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { text } from "../constants/text";
+import { authAPI } from "../services/api";
 import "./CreateAccPage.css";
 
 const CreateAccPage = () => {
@@ -41,33 +43,26 @@ const CreateAccPage = () => {
     setError("");
 
     if (!passwordValid) {
-      setError("Password does not meet requirements.");
+      setError(text.passwordRequirements);
       return;
     }
     if (!passwordsMatch) {
-      setError("Passwords don't match!");
+      setError(text.passwordsDontMatch);
       return;
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/auth/create-account",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const success = await authAPI.createAccount(email, password);
 
-      if (response.ok) {
+      if (success) {
         console.log("Account created!");
         navigate("/login");
       } else {
-        setError("Could not create account. Try again.");
+        setError(text.couldNotCreateAccount);
       }
     } catch (err) {
       console.error("Signup error:", err);
-      setError("Something went wrong. Try again later.");
+      setError(text.somethingWentWrong);
     }
   };
 
@@ -77,7 +72,7 @@ const CreateAccPage = () => {
       <form onSubmit={handleSubmit}>
         {/* Email */}
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">{text.email}:</label>
           <input
             type="email"
             id="email"
@@ -89,7 +84,7 @@ const CreateAccPage = () => {
 
         {/* Password */}
         <div className="form-group">
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">{text.password}:</label>
           <div className="password-input-container">
             <input
               type={showPassword ? "text" : "password"}
@@ -106,7 +101,7 @@ const CreateAccPage = () => {
               className="show-password-btn"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? text.hidePassword : text.showPassword}
             </button>
           </div>
           {/* Popup with unmet requirements */}
@@ -121,7 +116,7 @@ const CreateAccPage = () => {
 
         {/* Retype Password */}
         <div className="form-group">
-          <label htmlFor="retypePassword">Retype Password:</label>
+          <label htmlFor="retypePassword">{text.retypePassword}:</label>
           <div className="password-input-container">
             <input
               type={showRetypePassword ? "text" : "password"}
@@ -143,7 +138,7 @@ const CreateAccPage = () => {
               className="show-password-btn"
               onClick={() => setShowRetypePassword(!showRetypePassword)}
             >
-              {showRetypePassword ? "Hide" : "Show"}
+              {showRetypePassword ? text.hidePassword : text.showPassword}
             </button>
           </div>
         </div>
@@ -153,14 +148,14 @@ const CreateAccPage = () => {
 
         {/* Submit */}
         <button type="submit" className="signup-btn" disabled={!passwordsMatch}>
-          Create Account
+          {text.createAccount}
         </button>
       </form>
 
       <p>
-        Already have an account?{" "}
+        {text.alreadyHaveAccount}{" "}
         <button onClick={() => navigate("/login")} className="link-btn">
-          Login here
+          {text.loginHere}
         </button>
       </p>
     </div>

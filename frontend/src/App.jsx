@@ -3,6 +3,8 @@ import { useState } from "react";
 import Homepage from "./components/Homepage";
 import LoginPage from "./components/LoginPage";
 import CreateAccPage from "./components/CreateAccPage";
+import GamePage from "./components/GamePage";
+import { text } from "./constants/text";
 import "./App.css";
 
 function App() {
@@ -26,13 +28,13 @@ function App() {
             className="auth-button"
             onClick={() => handleNavigation("/login")}
           >
-            Login
+            {text.login}
           </button>
           <button
             className="auth-button"
             onClick={() => handleNavigation("/create-account")}
           >
-            Sign Up
+            {text.signUp}
           </button>
         </nav>
       </header>
@@ -45,6 +47,7 @@ function App() {
           />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/create-account" element={<CreateAccPage />} />
+          <Route path="/game" element={<GamePage />} />
         </Routes>
       </div>
     </>

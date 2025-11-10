@@ -4,6 +4,7 @@ import com.escaperoom.backend.dto.QuestionRequest;
 import com.escaperoom.backend.model.DifficultyLevel;
 import com.escaperoom.backend.model.Question;
 import com.escaperoom.backend.repo.QuestionRepo;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,5 +41,26 @@ public class QuestionService {
     public Question getQuestionById(Long id) {
         return questionRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
+    }
+
+    public boolean deleteQuestionById(Long id) {
+        if(questionRepo.existsById(id)) {
+            questionRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    public Question updateQuestion(Long id, @Valid QuestionRequest questionRequest) {
+        return questionRepo.findById(id)
+                .map(existing -> {
+                    existing.setQuestionText(questionRequest.getQuestionText());
+                    existing.setAnswer(questionRequest.getAnswer());
+                    existing.setHint(questionRequest.getHint());
+                    existing.setOrderNumber(questionRequest.getOrderNumber());
+                    existing.setDifficulty(questionRequest.getDifficulty());
+                    return questionRepo.save(existing);
+                })
+                .orElse(null);
     }
 }

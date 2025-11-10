@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { text } from "../constants/text";
+import { authAPI } from "../services/api";
 import "./LoginPage.css";
 
 const LoginPage = () => {
@@ -40,23 +42,17 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const isValid = await response.json();
+      const isValid = await authAPI.login(email, password);
 
       if (isValid) {
         console.log("Login successful!");
         navigate("/game"); // ✅ redirect after login
       } else {
-        setError("Invalid email or password");
+        setError(text.invalidCredentials);
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Something went wrong. Try again later.");
+      setError(text.somethingWentWrong);
     }
   };
 
@@ -66,7 +62,7 @@ const LoginPage = () => {
       <form onSubmit={handleSubmit}>
         {/* Email */}
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">{text.email}:</label>
           <input
             type="email"
             id="email"
@@ -78,7 +74,7 @@ const LoginPage = () => {
 
         {/* Password */}
         <div className="form-group">
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">{text.password}:</label>
           <div className="password-input-container">
             <input
               type="text"
@@ -94,7 +90,7 @@ const LoginPage = () => {
               className="show-password-btn"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? text.hidePassword : text.showPassword}
             </button>
           </div>
         </div>
@@ -104,17 +100,17 @@ const LoginPage = () => {
 
         {/* Submit */}
         <button type="submit" className="login-btn">
-          Login
+          {text.login}
         </button>
       </form>
 
       <p>
-        Don’t have an account?{" "}
+        {text.dontHaveAccount}{" "}
         <button
           onClick={() => navigate("/create-account")}
           className="link-btn"
         >
-          Create one
+          {text.createOne}
         </button>
       </p>
     </div>
