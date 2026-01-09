@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { text } from '../constants/text';
-import { questionsAPI, gameAPI } from '../services/api';
+import { questionsAPI, gameAPI, escapeRunAPI } from '../services/api';
 import './GamePage.css';
 
-const GamePage = () => {
+const GamePage = ({ onLogout, userId, userEmail }) => {
   // Game state management
   const [gameState, setGameState] = useState('initial'); // 'initial', 'selecting-difficulty', 'loading', 'playing', 'completed'
   const [difficultyLevels, setDifficultyLevels] = useState([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [gameSession, setGameSession] = useState(null);
+  const [latestRunSummary, setLatestRunSummary] = useState(null);
   
   // Question state
   const [questions, setQuestions] = useState([]);
@@ -97,6 +98,11 @@ const GamePage = () => {
   const totalQuestions = questions.length;
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
   const allLocksUnlocked = unlockedLocks.size === totalQuestions;
+  const difficultyLabels = {
+    EASY: text.difficultyEasy,
+    MEDIUM: text.difficultyMedium,
+    HARD: text.difficultyHard,
+  };
 
   // Handle starting new game
   const handleStartNewGame = async () => {
@@ -153,22 +159,62 @@ const GamePage = () => {
     try {
       setIsLoading(true);
       setError('');
-      const progress = await gameAPI.recallProgress();
-      
-      // Restore game state
-      setGameSession(progress.gameSession);
-      setQuestions(progress.questions);
-      setCurrentQuestionIndex(progress.currentQuestionIndex);
-      setUserAnswers(progress.userAnswers);
-      setUnlockedLocks(new Set(progress.unlockedLocks));
-      setSelectedDifficulty(progress.selectedDifficulty);
-      setTimePerQuestion(progress.timePerQuestion);
-      setTimeRemaining(progress.timePerQuestion);
-      
-      setGameState('playing');
+      setLatestRunSummary(null);
+
+      if (!userId) {
+        setError(text.userNotIdentified);
+        return;
+      }
+
+      const latestRun = await escapeRunAPI.fetchLatestRunSnapshot(userId);
+
+      if (!latestRun) {
+        setError(text.noProgressFound);
+        return;
+      }
+
+      const questionsData = await questionsAPI.getQuestions();
+      const questionEntries = (Array.isArray(questionsData) ? questionsData : [])
+        .map((question) => {
+          const identifier =
+            question?.id ??
+            question?.questionId ??
+            question?.questionID ??
+            question?.question?.id;
+
+          if (identifier === undefined || identifier === null) {
+            return null;
+          }
+
+          const label =
+            question?.question ??
+            question?.questionText ??
+            question?.title ??
+            text.unknownQuestion;
+
+          return [identifier, label];
+        })
+        .filter(Boolean);
+
+      const questionTitleById = new Map(questionEntries);
+
+      const formattedQuestions = latestRun.questionIds.map((questionId, index) => ({
+        questionId,
+        label:
+          questionTitleById.get(questionId) ??
+          `${text.recallSummaryQuestionLabel} ${index + 1}`,
+      }));
+
+      setLatestRunSummary({
+        difficulty: latestRun.difficulty,
+        totalTimeMillis: latestRun.totalTimeMillis,
+        finishedAt: latestRun.finishedAt,
+        questions: formattedQuestions,
+      });
+      setGameState('recall-summary');
     } catch (err) {
       console.error('Error recalling progress:', err);
-      setError(text.noProgressFound);
+      setError(text.somethingWentWrong);
     } finally {
       setIsLoading(false);
     }
@@ -226,7 +272,11 @@ const GamePage = () => {
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
     }
-    navigate('/');
+    if (onLogout) {
+      onLogout();
+    } else {
+      navigate('/');
+    }
   };
 
   const handleBackToInitial = () => {
@@ -244,7 +294,72 @@ const GamePage = () => {
     setGameSession(null);
     setTimeRemaining(0);
     setTimePerQuestion(0);
+    setLatestRunSummary(null);
   };
+
+  const formatDuration = (millis) => {
+    if (!millis || Number.isNaN(millis)) {
+      return text.unknownDuration;
+    }
+    const totalSeconds = Math.floor(millis / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatFinishedAt = (finishedAt) => {
+    if (!finishedAt) {
+      return text.unknownFinishedAt;
+    }
+    const date = new Date(finishedAt);
+    if (Number.isNaN(date.getTime())) {
+      return text.unknownFinishedAt;
+    }
+    return date.toLocaleString();
+  };
+
+  if (gameState === 'recall-summary' && latestRunSummary) {
+    return (
+      <div className="game-container">
+        <div className="recall-summary">
+          <h2>{text.recallSummaryTitle}</h2>
+          {userEmail && (
+            <p className="recall-summary-row">
+              <span className="recall-summary-label">{text.recallSummaryUser}</span>
+              <span>{userEmail}</span>
+            </p>
+          )}
+          <p className="recall-summary-row">
+            <span className="recall-summary-label">{text.recallSummaryDifficulty}</span>
+            <span>{difficultyLabels[latestRunSummary.difficulty] ?? latestRunSummary.difficulty}</span>
+          </p>
+          <p className="recall-summary-row">
+            <span className="recall-summary-label">{text.recallSummaryFinishedAt}</span>
+            <span>{formatFinishedAt(latestRunSummary.finishedAt)}</span>
+          </p>
+          <p className="recall-summary-row">
+            <span className="recall-summary-label">{text.recallSummaryDuration}</span>
+            <span>{formatDuration(latestRunSummary.totalTimeMillis)}</span>
+          </p>
+          <div className="recall-summary-questions">
+            <h3>{text.recallSummaryQuestions}</h3>
+            {latestRunSummary.questions.length > 0 ? (
+              <ol>
+                {latestRunSummary.questions.map((question) => (
+                  <li key={question.questionId}>{question.label}</li>
+                ))}
+              </ol>
+            ) : (
+              <p>{text.recallSummaryEmpty}</p>
+            )}
+          </div>
+          <button onClick={handleBackToInitial} className="back-button">
+            {text.backToMenu}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Initial state - show game initialization buttons
   if (gameState === 'initial') {
@@ -325,7 +440,7 @@ const GamePage = () => {
         <div className="error-screen">
           <h2>Error</h2>
           <p>{error}</p>
-          <button onClick={handleBackToInitial}>Back to Menu</button>
+          <button onClick={handleBackToInitial}>{text.backToMenu}</button>
         </div>
       </div>
     );

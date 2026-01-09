@@ -1,4 +1,5 @@
 const API_BASE_URL = 'http://localhost:8080/api';
+const DIFFICULTIES = ['EASY', 'MEDIUM', 'HARD'];
 
 // Auth API calls
 export const authAPI = {
@@ -18,6 +19,22 @@ export const authAPI = {
       body: JSON.stringify({ email, password }),
     });
     return response.ok;
+  },
+
+  getUserByEmail: async (email) => {
+    const response = await fetch(
+      `${API_BASE_URL}/auth/user?email=${encodeURIComponent(email)}`
+    );
+
+    if (response.ok) {
+      return response.json();
+    }
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    throw new Error('Failed to fetch user');
   },
 };
 
@@ -88,5 +105,55 @@ export const gameAPI = {
   saveProgress: (gameState) => {
     // Save progress to localStorage
     localStorage.setItem('escapeRoomProgress', JSON.stringify(gameState));
+  },
+};
+
+export const escapeRunAPI = {
+  fetchLatestRunSnapshot: async (userId) => {
+    if (!userId) {
+      throw new Error('User id is required to fetch runs');
+    }
+
+    const responses = await Promise.all(
+      DIFFICULTIES.map(async (difficulty) => {
+        const response = await fetch(
+          `${API_BASE_URL}/runs/latest?userId=${encodeURIComponent(
+            userId
+          )}&difficulty=${difficulty}`
+        );
+
+        if (response.ok) {
+          return response.json();
+        }
+
+        if (response.status === 404) {
+          return null;
+        }
+
+        throw new Error('Failed to fetch latest run');
+      })
+    );
+
+    const successfulRuns = responses.filter((run) => run !== null);
+
+    if (!successfulRuns.length) {
+      return null;
+    }
+
+    return successfulRuns.reduce((latest, current) => {
+      if (!latest) return current;
+
+      const latestFinishedAt = latest.finishedAt
+        ? new Date(latest.finishedAt)
+        : null;
+      const currentFinishedAt = current.finishedAt
+        ? new Date(current.finishedAt)
+        : null;
+
+      if (!latestFinishedAt) return current;
+      if (!currentFinishedAt) return latest;
+
+      return currentFinishedAt > latestFinishedAt ? current : latest;
+    }, null);
   },
 };

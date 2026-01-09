@@ -4,7 +4,7 @@ import { text } from "../constants/text";
 import { authAPI } from "../services/api";
 import "./LoginPage.css";
 
-const LoginPage = () => {
+const LoginPage = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -45,8 +45,19 @@ const LoginPage = () => {
       const isValid = await authAPI.login(email, password);
 
       if (isValid) {
-        console.log("Login successful!");
-        navigate("/game"); // ✅ redirect after login
+        const profile = await authAPI.getUserByEmail(email);
+
+        if (!profile) {
+          setError(text.userProfileNotFound);
+          return;
+        }
+
+        if (onLoginSuccess) {
+          onLoginSuccess(profile);
+          return;
+        }
+
+        navigate("/game", { state: { user: profile } });
       } else {
         setError(text.invalidCredentials);
       }

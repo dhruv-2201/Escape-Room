@@ -12,7 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,6 +54,13 @@ public class AuthController {
     public ResponseEntity<UUID> createUser(@RequestBody CreateUserRequest request) {
         User newUser = userService.createUser(request.getEmail(), request.getPassword());
         return ResponseEntity.status(201).body(newUser.getId());
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getUserByEmail(@RequestParam String email) {
+        return userService.findByEmail(email)
+                .map(user -> ResponseEntity.ok(new UserResponse(user.getId(), user.getEmail())))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/all-users")

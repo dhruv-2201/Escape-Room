@@ -1,14 +1,9 @@
 package com.escaperoom.backend.service;
 
 import com.escaperoom.backend.dto.QuestionRequest;
-import com.escaperoom.backend.model.DifficultyLevel;
 import com.escaperoom.backend.model.Question;
 import com.escaperoom.backend.repo.QuestionRepo;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

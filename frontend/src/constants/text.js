@@ -20,6 +20,8 @@ export const text = {
   dontHaveAccount: "Don't have an account?",
   loginHere: 'Login here',
   createOne: 'Create one',
+  userProfileNotFound: 'We could not load your profile. Please try again.',
+  userNotIdentified: 'We need your profile to recall progress. Please log in again.',
   
   // Game
   questionNumber: 'Question',
@@ -50,6 +52,18 @@ export const text = {
   timeRemaining: 'Time Remaining',
   timeUp: 'Time\'s Up!',
   questionTimeout: 'Time ran out for this question.',
+  recallSummaryTitle: 'Latest Run Summary',
+  recallSummaryUser: 'Player',
+  recallSummaryDifficulty: 'Difficulty',
+  recallSummaryFinishedAt: 'Finished at',
+  recallSummaryDuration: 'Duration',
+  recallSummaryQuestions: 'Questions answered',
+  recallSummaryQuestionLabel: 'Question',
+  recallSummaryEmpty: 'No question details available for this run.',
+  backToMenu: 'Back to Menu',
+  unknownQuestion: 'Unknown question',
+  unknownDuration: 'Unknown duration',
+  unknownFinishedAt: 'Unknown finish time',
   
   // Errors
   invalidCredentials: 'Invalid email or password',
