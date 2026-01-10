@@ -1,0 +1,37 @@
+.stage-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stage-scene-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stage-interaction-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .stage-container {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .stage-scene-section {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stage-interaction-section {
+    flex: 0 0 400px;
+  }
+}

@@ -157,3 +157,120 @@ export const escapeRunAPI = {
     }, null);
   },
 };
+
+// Escape Room Game API
+export const escapeRoomGameAPI = {
+  startGameSession: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/game/session/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, difficulty: null }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to start game session');
+    }
+    
+    return response.json();
+  },
+
+  getGameSession: async (sessionId, userId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/game/session/${sessionId}?userId=${encodeURIComponent(userId)}`
+    );
+    
+    if (response.status === 404) {
+      return null;
+    }
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch game session');
+    }
+    
+    return response.json();
+  },
+
+  getLatestGameSession: async (userId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/game/session/latest?userId=${encodeURIComponent(userId)}`
+    );
+    
+    if (response.status === 404) {
+      return null;
+    }
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch latest game session');
+    }
+    
+    return response.json();
+  },
+
+  inspectScene: async (gameSessionId, stage, inspectionArea = null) => {
+    const response = await fetch(`${API_BASE_URL}/game/inspect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gameSessionId,
+        stage,
+        inspectionArea,
+      }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to inspect scene');
+    }
+    
+    return response.json();
+  },
+
+  validateLock: async (lockType, gameSessionId, answer) => {
+    const response = await fetch(`${API_BASE_URL}/game/validate/${lockType}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gameSessionId,
+        answer,
+      }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to validate lock');
+    }
+    
+    return response.json();
+  },
+
+  useItem: async (gameSessionId, item, target = null) => {
+    const response = await fetch(`${API_BASE_URL}/game/use-item`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gameSessionId,
+        item,
+        target,
+      }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to use item');
+    }
+    
+    return response.json();
+  },
+
+  transitionStage: async (gameSessionId, targetStage) => {
+    const response = await fetch(
+      `${API_BASE_URL}/game/transition?gameSessionId=${gameSessionId}&targetStage=${targetStage}`,
+      {
+        method: 'POST',
+      }
+    );
+    
+    if (!response.ok) {
+      throw new Error('Failed to transition stage');
+    }
+    
+    return response.json();
+  },
+};

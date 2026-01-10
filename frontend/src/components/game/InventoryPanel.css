@@ -1,0 +1,53 @@
+.inventory-panel {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  background: var(--background-dark, #1d2327);
+  border: 2px solid var(--border-dark, #444);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.inventory-panel-header {
+  margin: 0 0 15px 0;
+  color: var(--text-primary, #ffffff);
+  font-size: 20px;
+  border-bottom: 1px solid var(--border-dark, #444);
+  padding-bottom: 10px;
+}
+
+.inventory-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inventory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: var(--background-darker, #0f1419);
+  border-radius: 4px;
+  border: 1px solid var(--border-dark, #444);
+}
+
+.inventory-item-name {
+  color: var(--text-primary, #ffffff);
+  font-weight: bold;
+}
+
+.use-item-button {
+  padding: 6px 12px;
+  background: var(--secondary, #ff9800);
+  border: none;
+  border-radius: 4px;
+  color: var(--text-primary, #ffffff);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.use-item-button:hover {
+  background: var(--secondaryHover, #f57c00);
+}

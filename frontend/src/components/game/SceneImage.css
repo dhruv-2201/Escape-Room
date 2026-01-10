@@ -1,0 +1,30 @@
+.scene-image-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border: 2px solid var(--border-dark, #444);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--background-darker, #0f1419);
+}
+
+.scene-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: default !important;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.scene-image:hover {
+  cursor: default !important;
+  opacity: 1;
+  filter: none;
+}
+
+.scene-image:active {
+  cursor: default !important;
+}
